@@ -20,6 +20,7 @@ export const getServerSideProps: GetServerSideProps<WeatherCityProps> = async (c
       temperature = Temperature.kelvin;
     }
   }
+
   try {
     const weather = await FetchWeather(cityParams as string, temperature);
     return {
@@ -34,6 +35,7 @@ export const getServerSideProps: GetServerSideProps<WeatherCityProps> = async (c
     throw Error("failed to fetch all data");
   }
 };
+
 type WeatherCityComponent = InferGetServerSidePropsType<typeof getServerSideProps>;
 const WeatherCity: NextPage<WeatherCityComponent> = ({ weather }) => {
   const router = useRouter();
@@ -45,9 +47,15 @@ const WeatherCity: NextPage<WeatherCityComponent> = ({ weather }) => {
         <div className="temperature-converter">
           <h1 className="title">Select Temperature</h1>
           <div className="buttons">
-            <button className="active">Celcius</button>
-            <button className="active">Farenheit</button>
-            <button className="active">Kelvin</button>
+            <button className="active" onClick={() => router.push(`/weather-result/${router.query.city}?temperature=celcius`)}>
+              Celcius
+            </button>
+            <button className="active" onClick={() => router.push(`/weather-result/${router.query.city}?temperature=farenheit`)}>
+              Farenheit
+            </button>
+            <button className="active" onClick={() => router.push(`/weather-result/${router.query.city}?temperature=kelvin`)}>
+              Kelvin
+            </button>
           </div>
         </div>
 

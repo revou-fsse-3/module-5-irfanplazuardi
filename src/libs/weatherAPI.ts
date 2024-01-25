@@ -8,6 +8,9 @@ export default async function fetchweather(city: string, temperature = Temperatu
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=9864e6963f7642192cb7624dd3540544&units=${temperature}`;
   const res = await fetch(url);
   const data = await res.json();
+  if ("message" in data) {
+    throw new Error(data.message);
+  }
   return data;
 }
 export interface WeatherResultProps {
