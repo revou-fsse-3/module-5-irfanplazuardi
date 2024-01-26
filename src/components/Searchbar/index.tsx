@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { Formik, Field, Form, ErrorMessage } from "formik";
@@ -10,27 +9,25 @@ const validationSchema = Yup.object().shape({
 });
 
 const Searchbar = () => {
-  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
+
+  const submit = async (values: any, { setErrors }: any) => {
+    try {
+      // Call fetchweather and pass the city from the form values
+      await fetchweather(values.city);
+      // If the city is valid, navigate to the next page
+      router.push(`/weather-result/${values.city}`);
+    } catch (error) {
+      // If fetchweather throws an error, display it in the form errors
+      if (error instanceof Error) {
+        setErrors(error.message);
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">
-      <Formik
-        initialValues={{ city: "" }}
-        validationSchema={validationSchema}
-        onSubmit={async (values, { setErrors }) => {
-          try {
-            // Call fetchweather and pass the city from the form values
-            await fetchweather(values.city);
-            // If the city is valid, navigate to the next page
-            router.push(`/weather-result/${values.city}`);
-          } catch (error) {
-            // If fetchweather throws an error, display it in the form errors
-            if (error instanceof Error) {
-              setErrorMessage(error.message);
-            }
-          }
-        }}>
+      <Formik initialValues={{ city: "" }} validationSchema={validationSchema} onSubmit={submit}>
         {({ errors, touched }) => (
           <>
             <Form className="flex gap-4">
@@ -41,7 +38,7 @@ const Searchbar = () => {
                 </span>
               </button>
             </Form>
-            {(touched.city && errors.city) || errorMessage ? <p className="error text-2xl text-red-500 pl-6">{(touched.city && errors.city) || errorMessage}</p> : null}
+            {(touched.city && errors.city) || errors.city ? <p className="error text-2xl text-red-500 pl-6">{(touched.city && errors.city) || errors.city}</p> : null}
           </>
         )}
       </Formik>
