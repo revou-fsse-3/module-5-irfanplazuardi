@@ -2,10 +2,12 @@ import { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next"
 import FetchWeather, { WeatherResultProps, Temperature } from "@/libs/weatherAPI";
 import { WiHumidity, WiStrongWind } from "react-icons/wi";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 interface WeatherCityProps {
   weather: WeatherResultProps;
 }
+
 export const getServerSideProps: GetServerSideProps<WeatherCityProps> = async (context) => {
   const cityParams = context.params!["city"];
   const temperatureQuery = context.query!["temperature"];
@@ -37,23 +39,41 @@ export const getServerSideProps: GetServerSideProps<WeatherCityProps> = async (c
 };
 
 type WeatherCityComponent = InferGetServerSidePropsType<typeof getServerSideProps>;
+
 const WeatherCity: NextPage<WeatherCityComponent> = ({ weather }) => {
   const router = useRouter();
+  const [temperatureType, setTemperatureType] = useState(Temperature.celcius);
 
   return (
     <div>
-      {/* {JSON.stringify(weather, null, 2)} */}
       <div>
         <div className="temperature-converter">
-          <h1 className="title">Select Temperature</h1>
+          <h1 className="title cursor-pointer" onClick={() => router.push(`/`)}>
+            Select Temperature
+          </h1>
           <div className="buttons">
-            <button className="active" onClick={() => router.push(`/weather-result/${router.query.city}?temperature=celcius`)}>
+            <button
+              className="active"
+              onClick={() => {
+                router.push(`/weather-result/${router.query.city}?temperature=celcius`);
+                setTemperatureType(Temperature.celcius);
+              }}>
               Celcius
             </button>
-            <button className="active" onClick={() => router.push(`/weather-result/${router.query.city}?temperature=farenheit`)}>
+            <button
+              className="active"
+              onClick={() => {
+                router.push(`/weather-result/${router.query.city}?temperature=farenheit`);
+                setTemperatureType(Temperature.farenheit);
+              }}>
               Farenheit
             </button>
-            <button className="active" onClick={() => router.push(`/weather-result/${router.query.city}?temperature=kelvin`)}>
+            <button
+              className="active"
+              onClick={() => {
+                router.push(`/weather-result/${router.query.city}?temperature=kelvin`);
+                setTemperatureType(Temperature.kelvin);
+              }}>
               Kelvin
             </button>
           </div>
@@ -63,7 +83,10 @@ const WeatherCity: NextPage<WeatherCityComponent> = ({ weather }) => {
           <span>{weather?.weather?.[0]?.icon && <img width={200} src={`https://openweathermap.org/img/wn/${weather?.weather?.[0]?.icon}@2x.png`} />}</span>
         </div>
 
-        <span className="weather-temp">{weather?.main?.temp}&#176;C</span>
+        <span className="weather-temp">
+          {weather?.main?.temp}&nbsp;
+          {temperatureType === Temperature.celcius ? "°C" : temperatureType === Temperature.farenheit ? "°F" : "°K"}
+        </span>
         <span className="weather-location">{weather?.name}</span>
         <div className="data-container">
           <div className="element">
@@ -89,4 +112,5 @@ const WeatherCity: NextPage<WeatherCityComponent> = ({ weather }) => {
     </div>
   );
 };
+
 export default WeatherCity;
