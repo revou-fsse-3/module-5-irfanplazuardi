@@ -1,5 +1,6 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import Button from ".";
+import "@testing-library/jest-dom/extend-expect";
 
 describe("Button unit testing", () => {
   const mocking = {

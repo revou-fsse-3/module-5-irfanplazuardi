@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Text unit testing Text content works correctly 1`] = `
+<p>
+  testing text
+</p>
+`;

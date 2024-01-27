@@ -17,19 +17,17 @@ const validationSchema = Yup.object().shape({
 const Findcity = ({ onSubmit }: Props) => {
   return (
     <Card>
-      <Text>{"Search your city"}</Text>
+      <Text>{"Weather Temperature"}</Text>
       <Card>
         <Formik initialValues={{ city: "" }} validationSchema={validationSchema} onSubmit={onSubmit}>
-          {({ isSubmitting }) => (
+          {() => (
             <Form>
               <Card>
                 <Text>{"City"}</Text>
-                <Field type="text" name="city" />
+                <Field type="text" name="city" placeholder="Search your city" />
                 <ErrorMessage name="email" component="div" />
               </Card>
-              <button type="submit" disabled={isSubmitting}>
-                {"Submit"}
-              </button>
+              <button type="submit">{"Submit"}</button>
             </Form>
           )}
         </Formik>
