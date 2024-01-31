@@ -1,49 +1,45 @@
 import { render, fireEvent, screen, waitFor } from "@testing-library/react";
-import Form from ".";
-import "@testing-library/jest-dom/extend-expect";
+import FormCity from "@/components/Form";
 
-describe("Form unit testing", () => {
-  const mockSubmit = jest.fn();
+describe("Form unit test", () => {
+  test("renders form", () => {
+    const mockOnSubmit = jest.fn();
+    render(<FormCity onSubmit={mockOnSubmit} />);
 
-  beforeEach(() => {
-    render(<Form onSubmit={mockSubmit} />);
+    const labelElement = screen.getByText("City:");
+    expect(labelElement).toMatchSnapshot();
+
+    const inputElement = screen.getByRole("textbox");
+    expect(inputElement).toMatchSnapshot();
+
+    const buttonElement = screen.getByText("Submit");
+    expect(buttonElement).toMatchSnapshot();
   });
 
-  test("render form works correctly", () => {
-    const title = screen.getByText("Weather Temperature");
-    expect(title).toBeDefined();
-
-    const subTitle = screen.getByText("City");
-    expect(subTitle).toBeDefined();
-
-    const input = screen.getByPlaceholderText("Search your city");
-    expect(input).toBeDefined();
-
-    const button = screen.getByText("Submit");
-    expect(button).toBeDefined();
-  });
-
-  test("Form submit with correct data", async () => {
-    const input = screen.getByPlaceholderText("Search your city");
-
-    fireEvent.change(input, { target: { value: "London" } });
-    fireEvent.click(screen.getByText("Submit"));
+  test("submit form", async () => {
+    const mockOnSubmit = jest.fn();
+    render(<FormCity onSubmit={mockOnSubmit} />);
+    const input = screen.getByRole("textbox");
+    const button = screen.getByRole("button", { name: "Submit" });
+    fireEvent.change(input, { target: { value: "New York" } });
+    fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockSubmit).toHaveBeenCalledTimes(1);
+      expect(mockOnSubmit).toHaveBeenCalledWith({ city: "New York" });
     });
-
-    expect(mockSubmit).toHaveBeenCalledWith({ city: "London" });
   });
 
-  test("Form submit with incorrect data", async () => {
-    const input = screen.getByPlaceholderText("Search your city");
+  test("submit form with error", async () => {
+    const mockOnSubmit = jest.fn();
+    render(<FormCity onSubmit={mockOnSubmit} />);
 
-    fireEvent.change(input, { target: { value: "" } });
-    fireEvent.click(screen.getByText("Submit"));
+    const button = screen.getByRole("button", { name: "Submit" });
+    fireEvent.click(button);
 
     await waitFor(() => {
-      expect(mockSubmit).toHaveBeenCalledTimes(0);
+      expect(mockOnSubmit).not.toHaveBeenCalled();
+
+      expect(screen.getByText("Please enter a city")).toMatchSnapshot();
     });
   });
 });

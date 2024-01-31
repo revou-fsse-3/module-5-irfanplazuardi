@@ -1,39 +1,29 @@
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import Card from "../Card";
-import Text from "../Text";
 
 interface Props {
-  onSubmit: (data: Form) => void;
-}
-interface Form {
-  city: string;
+  onSubmit: (data: { city: string }) => void;
 }
 
 const validationSchema = Yup.object().shape({
-  city: Yup.string().email("Invalid city").required("Required"),
+  city: Yup.string().required("Please enter a city"),
 });
 
-const Findcity = ({ onSubmit }: Props) => {
+const FormCity = ({ onSubmit }: Props) => {
+  const initialValues = { city: "" };
+
   return (
-    <Card>
-      <Text>{"Weather Temperature"}</Text>
-      <Card>
-        <Formik initialValues={{ city: "" }} validationSchema={validationSchema} onSubmit={onSubmit}>
-          {() => (
-            <Form>
-              <Card>
-                <Text>{"City"}</Text>
-                <Field type="text" name="city" placeholder="Search your city" />
-                <ErrorMessage name="email" component="div" />
-              </Card>
-              <button type="submit">{"Submit"}</button>
-            </Form>
-          )}
-        </Formik>
-      </Card>
-    </Card>
+    <Formik initialValues={initialValues} onSubmit={(values) => onSubmit({ city: values.city })} validationSchema={validationSchema}>
+      <Form>
+        <div>
+          <label htmlFor="city">City:</label>
+          <Field type="text" id="city" name="city" />
+          <ErrorMessage component="div" name="city" />
+        </div>
+        <button type="submit">Submit</button>
+      </Form>
+    </Formik>
   );
 };
 
-export default Findcity;
+export default FormCity;

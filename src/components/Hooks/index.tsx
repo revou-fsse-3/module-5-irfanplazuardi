@@ -1,42 +1,29 @@
 import { useState } from "react";
+import { Temperature } from "@/libs/weatherAPI";
 
-type TemperatureType = "celsius" | "fahrenheit" | "kelvin";
+const TemperatureConverter = ({ initialTemperature: initialTemperature = Temperature.celcius, onTemperatureChange }: { initialTemperature?: Temperature; onTemperatureChange: (newTemperature: Temperature) => void }) => {
+  const [temperatureType, setTemperatureType] = useState(initialTemperature);
 
-const useTemperatureConverter = (initialTemp: number, initialType: TemperatureType) => {
-  const [temp, setTemp] = useState(initialTemp);
-  const [type, setType] = useState(initialType);
-
-  const convertToCelsius = () => {
-    if (type === "fahrenheit") {
-      return (temp - 32) * (5 / 9);
-    } else if (type === "kelvin") {
-      return temp - 273.15;
-    } else {
-      return temp;
-    }
+  const handleTemperatureChange = (newTemperatureType: Temperature) => {
+    setTemperatureType(newTemperatureType);
+    onTemperatureChange(newTemperatureType);
   };
 
-  const convertToFahrenheit = () => {
-    if (type === "celsius") {
-      return temp * (9 / 5) + 32;
-    } else if (type === "kelvin") {
-      return (temp - 273.15) * (9 / 5) + 32;
-    } else {
-      return temp;
-    }
-  };
-
-  const convertToKelvin = () => {
-    if (type === "celsius") {
-      return temp + 273.15;
-    } else if (type === "fahrenheit") {
-      return (temp - 32) * (5 / 9) + 273.15;
-    } else {
-      return temp;
-    }
-  };
-
-  return { temp, type, setTemp, setType, convertToCelsius, convertToFahrenheit, convertToKelvin };
+  return (
+    <div className="temperature-converter">
+      <div className="buttons">
+        <button className={temperatureType === Temperature.celcius ? "active" : ""} onClick={() => handleTemperatureChange(Temperature.celcius)}>
+          Celcius
+        </button>
+        <button className={temperatureType === Temperature.farenheit ? "active" : ""} onClick={() => handleTemperatureChange(Temperature.farenheit)}>
+          Farenheit
+        </button>
+        <button className={temperatureType === Temperature.kelvin ? "active" : ""} onClick={() => handleTemperatureChange(Temperature.kelvin)}>
+          Kelvin
+        </button>
+      </div>
+    </div>
+  );
 };
 
-export default useTemperatureConverter;
+export default TemperatureConverter;
